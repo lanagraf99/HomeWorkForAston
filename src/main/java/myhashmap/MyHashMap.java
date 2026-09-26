@@ -3,6 +3,11 @@ package myhashmap;
 import java.util.Objects;
 
 public class MyHashMap<K,V> {
+    private static final int DEFAULT_INITIAL_CAPACITY = 16;
+    private static final float DEFAULT_LOAD_FACTOR = 0.75f;
+    private static final int RESIZE_MULTIPLIER = 2;
+    private static final int HASH_SHIFT = 16;
+
     private Node<K,V>[] table;
     private int size;
     private int capacity;
@@ -10,16 +15,16 @@ public class MyHashMap<K,V> {
     private int threshold;
 
     public MyHashMap() {
-        capacity = 16;
-        loadFactor = 0.75f;
-        threshold = 12;
+        capacity = DEFAULT_INITIAL_CAPACITY;
+        loadFactor = DEFAULT_LOAD_FACTOR;
+        threshold = (int)(capacity * loadFactor);
         table = (Node<K,V>[]) new Node[capacity];
     }
 
     static int hash(Object key) {
         if(key == null) return 0;
         int hash = key.hashCode();
-        return hash ^ (hash >>> 16);
+        return hash ^ (hash >>> HASH_SHIFT);
     }
 
     public V put(K key, V value) {
@@ -97,7 +102,7 @@ public class MyHashMap<K,V> {
     private void resize() {
         Node<K,V>[] oldTable = table;
         int oldCapacity = capacity;
-        capacity = oldCapacity * 2;
+        capacity = oldCapacity * RESIZE_MULTIPLIER;
         threshold = (int)(capacity * loadFactor);
         table = (Node<K,V>[]) new Node[capacity];
 
